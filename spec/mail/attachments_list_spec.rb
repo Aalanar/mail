@@ -122,6 +122,14 @@ describe "Attachments" do
       expected.should == file_data
     end
 
+    it "should only add one newline between attachment body and boundary" do
+      contents = "I have\ntwo lines with trailing newlines\n\n"
+      @mail.attachments['text.txt'] = { :content => contents}
+      encoded = @mail.encoded
+      regex = /\r\n#{Regexp.escape(contents.gsub(/\n/, "\r\n"))}\r\n--#{@mail.boundary}--\r\n\Z/
+      encoded.should match regex
+    end
+
   end
 
   describe "multiple attachments" do
